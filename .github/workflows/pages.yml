@@ -1,0 +1,68 @@
+# Публикует игры из games/ на GitHub Pages и собирает zip-архивы для консоли Яндекс.Игр.
+# Запуск: автоматически при изменениях в games/ или вручную (Actions → Игры на Pages → Run workflow).
+name: Игры на Pages
+
+on:
+  push:
+    branches: [claude/zen-euler-8cc96a]
+    paths: ['games/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Собрать сайт и архивы
+        run: |
+          mkdir -p _site zips
+          {
+            echo '<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">'
+            echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
+            echo '<title>Игры Fleuki — тестовые сборки</title>'
+            echo '<style>body{font:18px system-ui,sans-serif;background:#0B1B2B;color:#E8F1F2;padding:24px}a{color:#FFD27A}li{margin:12px 0}</style>'
+            echo '</head><body><h1>Тестовые сборки</h1><ul>'
+          } > _site/index.html
+          for dir in games/*/; do
+            slug=$(basename "$dir")
+            [ -f "$dir/index.html" ] || continue
+            name=$(grep -m1 'Название RU' "$dir/GAME_NAME.md" | sed 's/.*: *//')
+            # в игру и архив — только файлы игры, без документов и симулятора
+            cp -r "$dir" "_site/$slug"
+            find "_site/$slug" \( -name '*.md' -o -name 'sim.js' \) -delete
+            (cd "_site/$slug" && zip -qr "$GITHUB_WORKSPACE/zips/$slug.zip" .)
+            echo "<li>$name — <a href=\"$slug/\">играть</a> · <a href=\"$slug/?lang=en\">English</a></li>" >> _site/index.html
+            echo "$slug: $(du -sh "_site/$slug" | cut -f1), архив $(du -h "zips/$slug.zip" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo '</ul></body></html>' >> _site/index.html
+
+      - name: Архивы для консоли Яндекса
+        uses: actions/upload-artifact@v4
+        with:
+          name: yandex-zips
+          path: zips/*.zip
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -12,9 +12,8 @@ const musicBus = actx.createGain();
 musicBus.gain.value = 0.45;
 musicBus.connect(master);
 
-// Дорожки из заказа handoff/gpt/requests/lighthouse-keeper-music.md: menu, night, storm.
-// Список пуст, пока файлов нет в assets/music/ — иначе запросы дают 404 в консоли.
-const MUSIC_FILES = [];
+// Дорожки из заказа handoff/gpt/requests/lighthouse-keeper-music.md, файлы в assets/music/.
+const MUSIC_FILES = ['menu', 'night', 'storm'];
 const music = {};          // имя → AudioBuffer
 let playing = null;        // { name, src, gain }
 let wanted = null;
