@@ -1,0 +1,3 @@
+- Название RU: Смотритель маяка
+- Название EN: Lighthouse Keeper
+- slug: lighthouse-keeper
