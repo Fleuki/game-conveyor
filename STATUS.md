@@ -2,9 +2,10 @@
 
 | slug | название RU | название EN | этап | ждёт кого | обновлено |
 |------|-------------|-------------|------|-----------|-----------|
-| lighthouse-keeper | Смотритель маяка | Lighthouse Keeper | 3 build | claude | 2026-09-22 |
+| lighthouse-keeper | Смотритель маяка | Lighthouse Keeper | 4 check | claude | 2026-09-22 |
 
 ## Лог
 
 - 2026-09-22 — lighthouse-keeper — этап 1 idea: 3 идеи с оценками, выбрана «Смотритель маяка»; GAME_NAME.md, DESIGN.md, заказ ассетов для GPT, задача этапа 2.
 - 2026-09-22 — lighthouse-keeper — этап 2 assets: поставка GPT (PR #1) принята — 15 PNG, имена и размеры совпадают с заказом, альфа-канал у 11 спрайтов, название на icon/cover RU/EN без капса и без ошибок.
+- 2026-09-22 — lighthouse-keeper — этап 3 build: игра собрана (RU/EN, синтезированный звук, SDK, сохранения, реклама), баланс подобран симулятором; заказ музыки для GPT — handoff/gpt/requests/lighthouse-keeper-music.md, игра работает и без неё.
